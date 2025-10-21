@@ -352,3 +352,4 @@ def refresh_from_server(tree, master_password, username, zebra_cb):
 # ---------- Main ----------
 if __name__ == "__main__":
     open_login_window()
+# data secured
