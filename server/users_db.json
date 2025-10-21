@@ -1,0 +1,26 @@
+{
+  "ido303": {
+    "salt": "0MzXwLBHDdmqF4wcId55Vg==",
+    "encrypted": {
+      "nonce": "CCivAGxNmXFX5fmL",
+      "ciphertext": "ewss0k15uEWCS4plSsiLL9mCHh258Nv2kCI2MQNSji2H6Ti1iX32NgQqT9iC40tG/vg4hlB/sGtMAgcSDZ0DGFd1WOrywfROiOmGr3doQ66dTcfZ/Dcs2QGFSck56Nd9FeiIoTmK0mmKQIWB7C1p+Nly7zvY5lUbEFWFURwf5lIXS0GR52XNwl8MwyPy7n3Tk3pEdbmiOxUl19jGqQo=",
+      "tag": "aL5SfUwdJaesLIqD0e/4hw=="
+    }
+  },
+  "SHLOMITD": {
+    "salt": "gWrr0991IP+ueT4l/Au+RQ==",
+    "encrypted": {
+      "nonce": "4pyC0GkffoJ69vFO",
+      "ciphertext": "6MBjR0Yjvc5vZ2bv64f4",
+      "tag": "3LW4gYEzdabpmvuuQbuE9A=="
+    }
+  },
+  "SHLOMITDL": {
+    "salt": "13eNa3Tpwxp5mT7mBcX7kw==",
+    "encrypted": {
+      "nonce": "g+f/sXdKZQJUljiL",
+      "ciphertext": "TJbrVkRyMxZCCQ8hRy953gSyx6A5Nm4eej9HJez5GdnTd+/7xFSGt/1gLt61PhM+TI602HAmog9MWFkVKHXm6UWQnwVUVj7p517lSEv5sJ1gv5fcT1U1R7bmBDuyh8ff26LFJQVxvDDKThX8CCa7qmT+nbJzsPH0TijSLyJCisELsjlTkWf0XPZH8jymZrZecWwBEbpxckxmwD4hMqHK10Jg9HO7sqASgV4uKWa6bj1/bf1bftKo4dPxeE18417ejiB3cAynl/eM7oUxenEb1TvPEkD/jfe/bYPDfghICDs1bNk2wEUn0oN93AEemg0MwEo2slkLsjuJtDjezyi0KTPPRhsw2yIs9yIbr4EZBygpX056ifjqqWzyjPEjmacRaYGAdGFS6C+rmV7/VfCe0jxvxrFNrmsgQVtoCoUR3VtkbP+44K8I8nj3OvTAihMUvFGf5Egtv0NI//0JHHIzmmvYr6LqCQ==",
+      "tag": "VKnpF8EDyR7pe4OvM+ZIsg=="
+    }
+  }
+}
