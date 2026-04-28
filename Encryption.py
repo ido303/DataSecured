@@ -1,40 +1,37 @@
-# Encryption.py
 import os, base64, json
 from typing import Dict, Any, Union
-
-# ===== KDF (לכספת) =====
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 
+# ===== KDF (לכספת ולמפתחות) =====
 def derive_key(password: str, salt: bytes) -> bytes:
+    """מייצר מפתח תקין ל-Fernet מסיסמה ו-Salt"""
     kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(), length=32, salt=salt,
-        iterations=390_000, backend=default_backend()
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=390_000,
+        backend=default_backend()
     )
-    return kdf.derive(password.encode("utf-8"))
+    # Fernet דורשת מפתח בפורמט URL-safe base64
+    return base64.urlsafe_b64encode(kdf.derive(password.encode("utf-8")))
 
-# ===== AES-GCM =====
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+# ===== Fernet Encryption =====
+def encrypt_data(key: bytes, plaintext: bytes) -> str:
+    """הצפנת מידע והחזרת מחרוזת (Token)"""
+    f = Fernet(key)
+    return f.encrypt(plaintext).decode("utf-8")
 
-def encrypt_data(key: bytes, plaintext: bytes) -> Dict[str, str]:
-    nonce = os.urandom(12)
-    enc = Cipher(algorithms.AES(key), modes.GCM(nonce), backend=default_backend()).encryptor()
-    ciphertext = enc.update(plaintext) + enc.finalize()
-    return {
-        "nonce": base64.b64encode(nonce).decode("utf-8"),
-        "ciphertext": base64.b64encode(ciphertext).decode("utf-8"),
-        "tag": base64.b64encode(enc.tag).decode("utf-8"),
-    }
+def decrypt_data(key: bytes, token: Union[str, bytes]) -> bytes:
+    """פענוח הטוקן וחזרה לבייטים"""
+    if isinstance(token, str):
+        token = token.encode("utf-8")
+    f = Fernet(key)
+    return f.decrypt(token)
 
-def decrypt_data(key: bytes, enc_dict: Dict[str, str]) -> bytes:
-    nonce = base64.b64decode(enc_dict["nonce"])
-    ciphertext = base64.b64decode(enc_dict["ciphertext"])
-    tag = base64.b64decode(enc_dict["tag"])
-    dec = Cipher(algorithms.AES(key), modes.GCM(nonce, tag), backend=default_backend()).decryptor()
-    return dec.update(ciphertext) + dec.finalize()
-
-# ===== RSA (Handshake) =====
+# ===== RSA (Handshake - ללא שינוי) =====
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization
 
@@ -62,22 +59,14 @@ def rsa_decrypt(private_key, data: bytes) -> bytes:
     )
 
 def generate_aes_key(nbytes: int = 32) -> bytes:
-    return os.urandom(nbytes)
+    """מייצר מפתח רנדומלי בפורמט שמתאים ל-Fernet"""
+    return Fernet.generate_key()
 
-# ===== עזר ל-wire =====
-def enc_dict_to_bytes(d: Dict[str,str]) -> bytes:
-    return json.dumps(d, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+# ===== פונקציות עזר (מותאמות ל-Fernet) =====
+def enc_dict_to_bytes(token: str) -> bytes:
+    """הופך את הטוקן של פרנט לבייטים למשלוח"""
+    return token.encode("utf-8")
 
-def enc_dict_from_bytes(b: Union[bytes, bytearray]) -> Dict[str,str]:
-    return json.loads(b.decode("utf-8"))
-
-# ===== Aliases לקוד ישן =====
-def aes_encrypt(key: bytes, plaintext: bytes) -> Dict[str, str]:
-    return encrypt_data(key, plaintext)
-
-def aes_decrypt(key: bytes, enc: Union[Dict[str, str], str, bytes, bytearray]) -> bytes:
-    if isinstance(enc, (bytes, bytearray)):
-        enc = json.loads(enc.decode("utf-8"))
-    elif isinstance(enc, str):
-        enc = json.loads(enc)
-    return decrypt_data(key, enc)
+def enc_dict_from_bytes(b: bytes) -> str:
+    """הופך בייטים מהרשת חזרה לטוקן"""
+    return b.decode("utf-8")
