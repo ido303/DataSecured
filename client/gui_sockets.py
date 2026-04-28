@@ -11,8 +11,8 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from secure_channel import SecureChannel
 from Encryption import derive_key, encrypt_data, decrypt_data
 
-# הגדרות שרת
-SERVER_HOST = "127.0.0.1"
+# הגדרות שרת - מעודכן לכתובת ה-IP של המחשב השני
+SERVER_HOST = "192.168.25.131"
 SERVER_PORT = 6000
 CHANNEL = None
 
@@ -48,7 +48,7 @@ def apply_modern_theme(root):
     # עיצוב שדות קלט
     style.configure("TEntry", fieldbackground=BG_CARD, foreground="white", insertcolor="white", borderwidth=0)
 
-    # עיצוב טבלה (Treeview) - כולל ביטול הלבן במעבר עכבר
+    # עיצוב טבלה (Treeview)
     style.configure("Treeview",
                     background=BG_CARD,
                     fieldbackground=BG_CARD,
@@ -63,7 +63,6 @@ def apply_modern_theme(root):
                     font=bold_font,
                     borderwidth=0)
 
-    # כאן הסרנו את שינוי הצבע במעבר עכבר (active/hover) כדי למנוע את הצבע הלבן
     style.map("Treeview",
               background=[("selected", ACCENT)],
               foreground=[("selected", "white")])
@@ -97,7 +96,7 @@ def open_login_window():
     try:
         CHANNEL = SecureChannel(SERVER_HOST, SERVER_PORT).connect()
     except:
-        messagebox.showerror("Connection Error", "Server is offline. Start socket_server.py first.")
+        messagebox.showerror("Connection Error", f"Server at {SERVER_HOST} is offline. Start socket_server.py first.")
         return
 
     root = tk.Tk()
@@ -113,11 +112,11 @@ def open_login_window():
     container.pack(padx=50, fill="x")
 
     tk.Label(container, text="Username", font=fonts["bold"], fg=TEXT_MAIN, bg=BG_MAIN).pack(anchor="w")
-    e_user = ttk.Entry(container);
+    e_user = ttk.Entry(container)
     e_user.pack(fill="x", pady=(5, 15))
 
     tk.Label(container, text="Master Password", font=fonts["bold"], fg=TEXT_MAIN, bg=BG_MAIN).pack(anchor="w")
-    e_pass = ttk.Entry(container, show="*");
+    e_pass = ttk.Entry(container, show="*")
     e_pass.pack(fill="x", pady=(5, 25))
 
     ttk.Button(container, text="Login to Vault", style="Accent.TButton",
@@ -179,21 +178,21 @@ def open_databank_window(username, master_password, databank):
 
 # ---------- UI Helpers ----------
 def add_entry_ui(tree):
-    top = tk.Toplevel();
+    top = tk.Toplevel()
     top.title("Add New Entry")
     fonts = apply_modern_theme(top)
     center_window(top, 400, 450)
-    frm = tk.Frame(top, bg=BG_MAIN, padx=30, pady=30);
+    frm = tk.Frame(top, bg=BG_MAIN, padx=30, pady=30)
     frm.pack(fill="both", expand=True)
 
     tk.Label(frm, text="Site", bg=BG_MAIN, fg=TEXT_MUTED).pack(anchor="w")
-    e_site = ttk.Entry(frm);
+    e_site = ttk.Entry(frm)
     e_site.pack(fill="x", pady=(0, 15))
     tk.Label(frm, text="Username", bg=BG_MAIN, fg=TEXT_MUTED).pack(anchor="w")
-    e_user = ttk.Entry(frm);
+    e_user = ttk.Entry(frm)
     e_user.pack(fill="x", pady=(0, 15))
     tk.Label(frm, text="Password", bg=BG_MAIN, fg=TEXT_MUTED).pack(anchor="w")
-    e_pass = ttk.Entry(frm);
+    e_pass = ttk.Entry(frm)
     e_pass.pack(fill="x", pady=(0, 5))
 
     ai_lbl = tk.Label(frm, text="AI Strength: -", bg=BG_MAIN, fg=TEXT_MUTED, font=("Segoe UI", 9, "bold"))
@@ -216,21 +215,21 @@ def edit_entry_ui(tree):
     if not sel: return
     item_vals = tree.item(sel[0])["values"]
 
-    top = tk.Toplevel();
+    top = tk.Toplevel()
     top.title("Edit Entry")
     fonts = apply_modern_theme(top)
     center_window(top, 400, 450)
-    frm = tk.Frame(top, bg=BG_MAIN, padx=30, pady=30);
+    frm = tk.Frame(top, bg=BG_MAIN, padx=30, pady=30)
     frm.pack(fill="both", expand=True)
 
-    e_site = ttk.Entry(frm);
-    e_site.insert(0, item_vals[0]);
+    e_site = ttk.Entry(frm)
+    e_site.insert(0, item_vals[0])
     e_site.pack(fill="x", pady=(10, 15))
-    e_user = ttk.Entry(frm);
-    e_user.insert(0, item_vals[1]);
+    e_user = ttk.Entry(frm)
+    e_user.insert(0, item_vals[1])
     e_user.pack(fill="x", pady=(0, 15))
-    e_pass = ttk.Entry(frm);
-    e_pass.insert(0, item_vals[2]);
+    e_pass = ttk.Entry(frm)
+    e_pass.insert(0, item_vals[2])
     e_pass.pack(fill="x", pady=(0, 15))
 
     ttk.Button(frm, text="Update Entry", style="Accent.TButton",

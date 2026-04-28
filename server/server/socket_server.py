@@ -12,7 +12,7 @@ from Encryption import (
     encrypt_data, decrypt_data, enc_dict_to_bytes, enc_dict_from_bytes
 )
 
-# הגדרות קבועות
+# הגדרות קבועות - HOST 0.0.0.0 מאפשר חיבור מכל מחשב ברשת
 HOST = "0.0.0.0"
 PORT = 6000
 DB_PATH = Path(__file__).resolve().parent / "users_db.json"
@@ -38,7 +38,7 @@ def _save_db(db):
         print(f"[ERROR] Save DB failed: {e}")
 
 
-# ---------- עזר לתקשורת (נשאר אותו דבר) ----------
+# ---------- עזר לתקשורת ----------
 def recv_exact(conn, n):
     buf = b""
     while len(buf) < n:
@@ -79,7 +79,6 @@ class PasswordServer:
             s.listen(100)
             while True:
                 conn, addr = s.accept()
-                # דרישה 2+4: עבודה מקבילית עם תהליכונים
                 threading.Thread(target=self.handle_client, args=(conn, addr), daemon=True).start()
 
     def handle_client(self, conn, addr):
@@ -101,7 +100,7 @@ class PasswordServer:
                 except (ConnectionError, ValueError):
                     break
 
-                # פענוח Fernet (מחזיר בייטים של JSON)
+                # פענוח Fernet
                 token = enc_dict_from_bytes(enc_msg_bytes)
                 plaintext = decrypt_data(session_key, token)
                 msg = json.loads(plaintext.decode("utf-8"))
@@ -110,7 +109,7 @@ class PasswordServer:
                 resp = {"ok": False, "error": "unknown_action"}
 
                 if t == "logout":
-                    log(f"Logout: {addr}");
+                    log(f"Logout: {addr}")
                     break
 
                 elif t == "register":
@@ -139,7 +138,7 @@ class PasswordServer:
                         resp = {"ok": True}
                         log(f"Vault updated for: {user}")
 
-                # הצפנת התשובה ב-Fernet ושליחה
+                # הצפנת התשובה ושליחה
                 token_resp = encrypt_data(session_key, json.dumps(resp).encode())
                 send_frame(conn, enc_dict_to_bytes(token_resp))
 
