@@ -11,8 +11,8 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from secure_channel import SecureChannel
 from Encryption import derive_key, encrypt_data, decrypt_data
 
-# הגדרות שרת - מעודכן לכתובת ה-IP של המחשב השני
-SERVER_HOST = "192.168.25.131"
+# הגדרות שרת - מעודכן ל-127.0.0.1 להרצה מקומית על אותו מחשב
+SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 6000
 CHANNEL = None
 
